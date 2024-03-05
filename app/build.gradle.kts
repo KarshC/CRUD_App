@@ -42,7 +42,7 @@ android {
 
 dependencies {
     val lifecycle_version = "2.7.0"
-    val room_version = "2.2.3"
+    val room_version = "2.6.1"
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -56,15 +56,15 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
     // LiveData
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+    implementation ("androidx.lifecycle:lifecycle-common-java8:$lifecycle_version")
     // Annotation processor
-    kapt("groupId:artifactId:version")
-    kapt("androidx.lifecycle:lifecycle-compiler:$lifecycle_version")
+    //kapt("androidx.lifecycle:lifecycle-compiler:$lifecycle_version")
     //Room
     implementation("androidx.room:room-runtime:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation("androidx.room:room-ktx:$room_version")
     //Corutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
 
 }
