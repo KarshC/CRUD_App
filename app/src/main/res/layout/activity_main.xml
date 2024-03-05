@@ -55,6 +55,7 @@
                 android:layout_weight="1"
                 tools:text="Save"
                 android:text="@={subscriberViewModel.saveOrUpdateButtonText}"
+                android:onClick="@{() -> subscriberViewModel.saveOrUpdate()}"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -65,6 +66,7 @@
                 android:layout_weight="1"
                 tools:text="Clear All"
                 android:text="@{subscriberViewModel.clearAllOrDeleteButtonText}"
+                android:onClick="@{() -> subscriberViewModel.clearAllOrDelete()}"
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
