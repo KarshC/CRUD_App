@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.crudapp.databinding.ActivityMainBinding
 import com.example.crudapp.db.SubscriberDB
 import com.example.crudapp.db.SubscriberRepository
@@ -25,8 +26,17 @@ class MainActivity : AppCompatActivity() {
         )[SubscriberViewModel::class.java]
         binding.subscriberViewModel = subscriberViewModel
         binding.lifecycleOwner = this
+        initRecyclerView()
+    }
+
+    private fun initRecyclerView(){
+        binding.subscriberRecyclerView.layoutManager = LinearLayoutManager(this)
+        displaySubscriberList()
+    }
+
+    private fun displaySubscriberList() {
         subscriberViewModel.subscribers.observe(this, Observer {
-            Toast.makeText(this, "List Observed", Toast.LENGTH_LONG).show()
+            binding.subscriberRecyclerView.adapter = MyRecyclerViewAdapter(it)
         })
     }
 }
