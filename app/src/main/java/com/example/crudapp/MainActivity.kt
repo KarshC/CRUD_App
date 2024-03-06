@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.crudapp.databinding.ActivityMainBinding
+import com.example.crudapp.db.Subscriber
 import com.example.crudapp.db.SubscriberDB
 import com.example.crudapp.db.SubscriberRepository
 import com.example.crudapp.viewmodel.SubscriberViewModel
@@ -36,7 +37,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun displaySubscriberList() {
         subscriberViewModel.subscribers.observe(this, Observer {
-            binding.subscriberRecyclerView.adapter = MyRecyclerViewAdapter(it)
+            binding.subscriberRecyclerView.adapter = MyRecyclerViewAdapter(it, {selectedItem: Subscriber -> listClick(selectedItem)})
         })
+    }
+
+    private fun listClick(subscriber: Subscriber){
+        Toast.makeText(this, "Selected Name is ${subscriber.name}", Toast.LENGTH_LONG).show()
     }
 }
