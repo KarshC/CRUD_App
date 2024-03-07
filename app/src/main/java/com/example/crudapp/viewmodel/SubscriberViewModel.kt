@@ -1,6 +1,8 @@
 package com.example.crudapp.viewmodel
 
+import android.provider.SyncStateContract.Helpers.insert
 import android.provider.SyncStateContract.Helpers.update
+import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -35,16 +37,27 @@ class SubscriberViewModel(private val subscriberRepository: SubscriberRepository
     }
 
     fun saveOrUpdate() {
-        if (isUpdateOrDelete) {
-            subscribeToUpdateOrDelete.name = inputName.value!!
-            subscribeToUpdateOrDelete.email = inputEmail.value!!
-            update(subscribeToUpdateOrDelete)
-        } else {
-            val name = inputName.value!!
-            val email = inputEmail.value!!
-            insert(Subscriber(0, name, email))
-            inputName.value = ""
-            inputEmail.value = ""
+        if (inputName.value == null) {
+            statusMessage.value =
+                Event("Please input subscriber's name.")
+        } else if (inputEmail.value == null) {
+            statusMessage.value =
+                Event("Please input subscriber's email.")
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(inputEmail.value!!).matches()) {
+            statusMessage.value =
+                Event("Please input correct subscriber's email.")
+        }else {
+            if (isUpdateOrDelete) {
+                subscribeToUpdateOrDelete.name = inputName.value!!
+                subscribeToUpdateOrDelete.email = inputEmail.value!!
+                update(subscribeToUpdateOrDelete)
+            } else {
+                val name = inputName.value!!
+                val email = inputEmail.value!!
+                insert(Subscriber(0, name, email))
+                inputName.value = ""
+                inputEmail.value = ""
+            }
         }
     }
 
@@ -114,9 +127,9 @@ class SubscriberViewModel(private val subscriberRepository: SubscriberRepository
     private fun deleteAll() = viewModelScope.launch(Dispatchers.IO) {
         val rows = subscriberRepository.deleteAll()
         withContext(Dispatchers.Main) {
-            if(rows > 0) {
+            if (rows > 0) {
                 statusMessage.value = Event("All Subscribers deleted successfully.")
-            }else{
+            } else {
                 statusMessage.value =
                     Event("Error while deleting all rows.")
             }

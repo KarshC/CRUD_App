@@ -17,6 +17,7 @@ import com.example.crudapp.viewmodel.SubscriberViewModelFactory
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var subscriberViewModel: SubscriberViewModel
+    private lateinit var subscriberAdapter: MyRecyclerViewAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -37,18 +38,21 @@ class MainActivity : AppCompatActivity() {
 
     private fun initRecyclerView() {
         binding.subscriberRecyclerView.layoutManager = LinearLayoutManager(this)
+        subscriberAdapter =
+            MyRecyclerViewAdapter({ selectedItem: Subscriber -> listClick(selectedItem) })
+        binding.subscriberRecyclerView.adapter = subscriberAdapter
         displaySubscriberList()
     }
 
     private fun displaySubscriberList() {
         subscriberViewModel.subscribers.observe(this, Observer {
-            binding.subscriberRecyclerView.adapter =
-                MyRecyclerViewAdapter(it, { selectedItem: Subscriber -> listClick(selectedItem) })
+            subscriberAdapter.setList(it)
+            subscriberAdapter.notifyDataSetChanged()
         })
     }
 
     private fun listClick(subscriber: Subscriber) {
-        Toast.makeText(this, "Selected Name is ${subscriber.name}", Toast.LENGTH_LONG).show()
+        //Toast.makeText(this, "Selected Name is ${subscriber.name}", Toast.LENGTH_LONG).show()
         subscriberViewModel.initUpdateAndDelete(subscriber)
     }
 }
