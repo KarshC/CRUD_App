@@ -28,20 +28,26 @@ class MainActivity : AppCompatActivity() {
         binding.subscriberViewModel = subscriberViewModel
         binding.lifecycleOwner = this
         initRecyclerView()
+        subscriberViewModel.message.observe(this, Observer {
+            it.getContentIfNotHandled()?.let {
+                Toast.makeText(this, it, Toast.LENGTH_LONG).show()
+            }
+        })
     }
 
-    private fun initRecyclerView(){
+    private fun initRecyclerView() {
         binding.subscriberRecyclerView.layoutManager = LinearLayoutManager(this)
         displaySubscriberList()
     }
 
     private fun displaySubscriberList() {
         subscriberViewModel.subscribers.observe(this, Observer {
-            binding.subscriberRecyclerView.adapter = MyRecyclerViewAdapter(it, {selectedItem: Subscriber -> listClick(selectedItem)})
+            binding.subscriberRecyclerView.adapter =
+                MyRecyclerViewAdapter(it, { selectedItem: Subscriber -> listClick(selectedItem) })
         })
     }
 
-    private fun listClick(subscriber: Subscriber){
+    private fun listClick(subscriber: Subscriber) {
         Toast.makeText(this, "Selected Name is ${subscriber.name}", Toast.LENGTH_LONG).show()
         subscriberViewModel.initUpdateAndDelete(subscriber)
     }

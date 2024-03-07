@@ -1,9 +1,10 @@
 package com.example.crudapp.viewmodel
 
-import android.provider.SyncStateContract.Helpers.insert
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.crudapp.Event
 import com.example.crudapp.db.Subscriber
 import com.example.crudapp.db.SubscriberRepository
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +19,10 @@ class SubscriberViewModel(private val subscriberRepository: SubscriberRepository
     val saveOrUpdateButtonText = MutableLiveData<String>()
     val clearAllOrDeleteButtonText = MutableLiveData<String>()
 
+    private val statusMessage = MutableLiveData<Event<String>>()
+    val message : LiveData<Event<String>>
+        get() = statusMessage
+
     val subscribers = subscriberRepository.subscribers
 
     private var isUpdateOrDelete = false
@@ -31,7 +36,7 @@ class SubscriberViewModel(private val subscriberRepository: SubscriberRepository
     fun saveOrUpdate() {
         if (isUpdateOrDelete) {
             subscribeToUpdateOrDelete.name = inputName.value!!
-            subscribeToUpdateOrDelete.name = inputEmail.value!!
+            subscribeToUpdateOrDelete.email = inputEmail.value!!
             update(subscribeToUpdateOrDelete)
         } else {
             val name = inputName.value!!
@@ -53,6 +58,9 @@ class SubscriberViewModel(private val subscriberRepository: SubscriberRepository
     fun insert(subscriber: Subscriber) {
         viewModelScope.launch(Dispatchers.IO) {
             subscriberRepository.insert(subscriber)
+            withContext(Dispatchers.Main){
+                statusMessage.value = Event("Subscriber ${subscriber.name} inserted successfully.")
+            }
         }
     }
 
@@ -60,6 +68,7 @@ class SubscriberViewModel(private val subscriberRepository: SubscriberRepository
         viewModelScope.launch(Dispatchers.IO) {
             subscriberRepository.update(subscriber)
             withContext(Dispatchers.Main) {
+                statusMessage.value = Event("Subscriber ${subscriber.name} updated successfully.")
                 inputName.value = ""
                 inputEmail.value = ""
                 isUpdateOrDelete = false
@@ -73,6 +82,7 @@ class SubscriberViewModel(private val subscriberRepository: SubscriberRepository
         viewModelScope.launch(Dispatchers.IO) {
             subscriberRepository.delete(subscriber)
             withContext(Dispatchers.Main) {
+                statusMessage.value = Event("Subscriber ${subscriber.name} deleted successfully.")
                 inputName.value = ""
                 inputEmail.value = ""
                 isUpdateOrDelete = false
@@ -82,7 +92,12 @@ class SubscriberViewModel(private val subscriberRepository: SubscriberRepository
         }
     }
 
-    fun deleteAll() = viewModelScope.launch(Dispatchers.IO) { subscriberRepository.deleteAll() }
+    fun deleteAll() = viewModelScope.launch(Dispatchers.IO) {
+        subscriberRepository.deleteAll()
+        withContext(Dispatchers.Main){
+            statusMessage.value = Event("All Subscribers deleted successfully.")
+        }
+    }
 
     fun initUpdateAndDelete(subscriber: Subscriber) {
         inputName.value = subscriber.name
